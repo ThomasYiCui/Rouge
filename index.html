@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Adventure Game</title>
+    <style>
+
+    </style>
+  </head>
+  <body>
+<canvas id="canvi"></canvas>
+<script>
+var canvas = document.getElementById("canvi");
+var ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var mouseX = 0;
+var mouseY = 0;
+var dragged = false;
+var clicked = false
+var keys = [];
+
+canvas.addEventListener("mousemove", function(e) {
+    var cRect = canvas.getBoundingClientRect();
+    mouseX = Math.round(e.clientX - cRect.left);
+    mouseY = Math.round(e.clientY - cRect.top);
+});
+canvas.addEventListener("mousedown", function(e) {
+    dragged = true;
+}, false);
+canvas.addEventListener("mouseup", function(e) {
+    if(dragged === true) {
+        clicked = true;
+        dragged = false;
+    }
+}, false);
+window.addEventListener("keydown", keysPressed, false);
+window.addEventListener("keyup", keysReleased, false);
+
+function keysPressed(e) {
+    // store an entry for every key pressed
+    keys[e.keyCode] = true;
+    e.preventDefault();
+}
+function keysReleased(e) {
+    // mark keys that were released
+    keys[e.keyCode] = false;
+}
+
+function ellipse(x, y, radiusX, radiusY, rotation) {
+    ctx.beginPath();
+    ctx.ellipse(x, y, radiusX, radiusY, rotation, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+let cam = {
+  x: 0,
+  y: 0,
+}
+function Player() {
+  this.x = 0;
+  this.y = 0;
+  this.spd = 2;
+  this.str = 1;
+  this.r = 0;
+  this.inventory = ["stick", "", "", ""];
+  this.equipped = 0;
+}
+Player.prototype.hand = fu
+Player.prototype.draw = function() {
+  ctx.fillStyle = "rgb(0, 0, 0)";
+  ellipse(this.x - cam.x, this.y - cam.y, 24, 24, 0)
+  ctx.fillStyle = "rgb(255, 200, 155)";
+  ellipse(this.x - cam.x, this.y - cam.y, 20, 20, 0)
+  
+  let perp = this.r + Math.PI/2;
+  
+  switch(this.inventory[this.equipped]) {
+    case "stick":
+      ctx.fillStyle = "rgb(0, 0, 0)";
+      ellipse(this.x - cam.x + Math.cos(this.r) * 30 + Math.cos(perp) * 3, this.y - cam.y + Math.sin(this.r) * 30 + Math.sin(perp) * 3, 8, 8, 0)
+      ctx.fillStyle = "rgb(255, 200, 155)";
+      ellipse(this.x - cam.x + Math.cos(this.r) * 30 + Math.cos(perp) * 3, this.y - cam.y + Math.sin(this.r) * 30 + Math.sin(perp) * 3, 6, 6, 0)
+      
+      
+      ctx.strokeStyle = "rgb(0, 0, 0)"
+      ctx.lineWidth = 11
+      ctx.beginPath();
+      ctx.moveTo(this.x - cam.x + Math.cos(this.r) * 21, this.y - cam.y + Math.sin(this.r) * 21);
+      ctx.lineTo(this.x - cam.x + Math.cos(this.r) * 104, this.y - cam.y + Math.sin(this.r) * 104)
+      ctx.stroke();
+      
+      ctx.strokeStyle = "rgb(150, 87, 0)"
+      ctx.lineWidth = 5
+      ctx.beginPath();
+      ctx.moveTo(this.x - cam.x + Math.cos(this.r) * 25, this.y - cam.y + Math.sin(this.r) * 25);
+      ctx.lineTo(this.x - cam.x + Math.cos(this.r) * 100, this.y - cam.y + Math.sin(this.r) * 100)
+      ctx.stroke();
+      
+      ctx.fillStyle = "rgb(0, 0, 0)";
+      ellipse(this.x - cam.x + Math.cos(this.r) * 38, this.y - cam.y + Math.sin(this.r) * 38, 8, 8, 0)
+      ctx.fillStyle = "rgb(255, 200, 155)";
+      ellipse(this.x - cam.x + Math.cos(this.r) * 38, this.y - cam.y + Math.sin(this.r) * 38, 6, 6, 0)
+    break;
+  }
+};
+Player.prototype.update = function() {
+  cam.x = this.x - canvas.width/2;
+  cam.y = this.y - canvas.height/2;
+  this.r = Math.atan2((this.y - cam.y) - mouseY, (this.x - cam.x) - mouseX) + Math.PI;
+  
+  if(keys[87] || keys[38]) {
+        this.y-=this.spd;
+    } else if(keys[83] || keys[40]) {
+        this.y+=this.spd;
+    }
+    if(keys[65] || keys[37]) {
+        this.x-=this.spd;
+    } else if(keys[68] || keys[39]) {
+        this.x+=this.spd;
+    }
+};
+let player = new Player();
+
+
+let myVar = setInterval(function() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle = "rgb(46, 135, 30)"
+  ctx.fillRect(-1000 - cam.x, -1000 - cam.y, 2000, 2000);
+  player.draw();
+  player.update();
+}, 1);
+</script>
+  </body>
+</html>
