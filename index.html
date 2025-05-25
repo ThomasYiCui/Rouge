@@ -52,6 +52,21 @@ function ellipse(x, y, radiusX, radiusY, rotation) {
     ctx.fill();
 }
 
+function hitbox(x, y, s) {
+  this.x = x;
+  this.y = y;
+  this.s = s;
+  this.team = 0;
+}
+hitbox.prototype.checkCollision = function(t) {
+  if()
+}
+hitbox.prototype.draw = function() {
+  if(this.team === 0) {
+    ctx.fillStyle = "rgb(0, 255, 0, 100)"
+    ellipse(this.x - cam.x, this.y - cam.y, this.s, this.s, 0);
+  }
+}
 let cam = {
   x: 0,
   y: 0,
@@ -61,26 +76,28 @@ function Player() {
   this.y = 0;
   this.spd = 2;
   this.str = 1;
+  this.size = 20
   this.r = 0;
   this.inventory = ["stick", "", "", ""];
   this.equipped = 0;
 }
-Player.prototype.hand = fu
+Player.prototype.hand = function(x, y, s) {
+  let perp = this.r + Math.PI/2;
+  
+  ctx.fillStyle = "rgb(0, 0, 0)";
+  ellipse(this.x - cam.x + Math.cos(this.r) * x + Math.cos(perp) * y, this.y - cam.y + Math.sin(this.r) * x + Math.sin(perp) * y, s + 2, s + 2, 0)
+  ctx.fillStyle = "rgb(255, 200, 155)";
+  ellipse(this.x - cam.x + Math.cos(this.r) * x + Math.cos(perp) * y, this.y - cam.y + Math.sin(this.r) * x + Math.sin(perp) * y, s , s, 0)
+}
 Player.prototype.draw = function() {
   ctx.fillStyle = "rgb(0, 0, 0)";
-  ellipse(this.x - cam.x, this.y - cam.y, 24, 24, 0)
+  ellipse(this.x - cam.x, this.y - cam.y, this.size * 1.2, this.size * 1.2, 0)
   ctx.fillStyle = "rgb(255, 200, 155)";
-  ellipse(this.x - cam.x, this.y - cam.y, 20, 20, 0)
-  
-  let perp = this.r + Math.PI/2;
+  ellipse(this.x - cam.x, this.y - cam.y, this.size, this.size, 0)
   
   switch(this.inventory[this.equipped]) {
     case "stick":
-      ctx.fillStyle = "rgb(0, 0, 0)";
-      ellipse(this.x - cam.x + Math.cos(this.r) * 30 + Math.cos(perp) * 3, this.y - cam.y + Math.sin(this.r) * 30 + Math.sin(perp) * 3, 8, 8, 0)
-      ctx.fillStyle = "rgb(255, 200, 155)";
-      ellipse(this.x - cam.x + Math.cos(this.r) * 30 + Math.cos(perp) * 3, this.y - cam.y + Math.sin(this.r) * 30 + Math.sin(perp) * 3, 6, 6, 0)
-      
+      this.hand(30, 3, 6);
       
       ctx.strokeStyle = "rgb(0, 0, 0)"
       ctx.lineWidth = 11
@@ -96,10 +113,7 @@ Player.prototype.draw = function() {
       ctx.lineTo(this.x - cam.x + Math.cos(this.r) * 100, this.y - cam.y + Math.sin(this.r) * 100)
       ctx.stroke();
       
-      ctx.fillStyle = "rgb(0, 0, 0)";
-      ellipse(this.x - cam.x + Math.cos(this.r) * 38, this.y - cam.y + Math.sin(this.r) * 38, 8, 8, 0)
-      ctx.fillStyle = "rgb(255, 200, 155)";
-      ellipse(this.x - cam.x + Math.cos(this.r) * 38, this.y - cam.y + Math.sin(this.r) * 38, 6, 6, 0)
+      this.hand(38, 0, 6);
     break;
   }
 };
